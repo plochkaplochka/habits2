@@ -56,7 +56,6 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
   border: 1px solid var(--border);
 }
 
-/* Вкладки */
 .tab-panel { display: none; animation: fadeIn 0.25s ease; }
 .tab-panel.active { display: block; }
 
@@ -65,7 +64,6 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Нижняя навигация */
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -135,7 +133,6 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
 
 .nav-btn.active .nav-icon { transform: scale(1.1); }
 
-/* Общий стрик */
 .global-streak {
   background: var(--card);
   border: 1px solid var(--border);
@@ -243,7 +240,7 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
   z-index: 1;
 }
 
-/* Статистика */
+/* === Статистика === */
 .stats-section {
   background: var(--card);
   border: 1px solid var(--border);
@@ -476,37 +473,279 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
   line-height: 1.6;
 }
 
-/* Форма */
-.add-form { display: flex; gap: 10px; margin-bottom: 20px; }
-
-.add-form input {
-  flex: 1;
+/* === Форма === */
+.add-form {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 16px;
-  color: var(--text);
-  font-size: 15px;
-  outline: none;
-  transition: border-color 0.2s;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-.add-form input:focus { border-color: var(--accent); }
+.add-form-row {
+  display: flex;
+  gap: 10px;
+}
 
-.add-form button {
+.add-form input[type="text"] {
+  flex: 1;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  color: var(--text);
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+.add-form input[type="text"]:focus { border-color: var(--accent); }
+.add-form input[type="text"]::placeholder { color: var(--muted); }
+
+.add-form button[type="submit"] {
   background: var(--accent);
   border: none;
   border-radius: 12px;
-  padding: 0 22px;
+  padding: 0 24px;
   color: white;
-  font-size: 20px;
+  font-size: 26px;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s, transform 0.1s;
+  min-width: 64px;
 }
 
-.add-form button:hover { background: var(--accent-2); }
-.add-form button:active { transform: scale(0.96); }
+.add-form button[type="submit"]:hover { background: var(--accent-2); }
+.add-form button[type="submit"]:active { transform: scale(0.96); }
+
+/* ===== БОЛЬШОЙ ПЕРЕКЛЮЧАТЕЛЬ СЧЁТЧИКА ===== */
+.counter-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.counter-toggle-row:hover {
+  background: rgba(108,92,231,0.06);
+  border-color: rgba(108,92,231,0.4);
+}
+
+.counter-toggle-row.active {
+  background: rgba(108,92,231,0.1);
+  border-color: var(--accent);
+}
+
+/* Скрываем настоящий чекбокс, но оставляем его в DOM для доступности */
+.counter-toggle-row input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+
+/* Кастомный большой чекбокс */
+.toggle-box {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  background: rgba(255,255,255,0.03);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: transparent;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.counter-toggle-row.active .toggle-box {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(108,92,231,0.5);
+}
+
+.toggle-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.toggle-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 3px;
+  transition: color 0.2s;
+}
+
+.counter-toggle-row.active .toggle-title {
+  color: var(--accent-2);
+}
+
+.toggle-sub {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* ===== БОЛЬШОЙ ВВОД ЦЕЛИ ===== */
+.goal-block {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(108,92,231,0.06);
+  border: 1px solid rgba(108,92,231,0.3);
+  border-radius: 14px;
+  animation: goalSlide 0.25s ease;
+}
+
+.goal-block.active { display: flex; }
+
+@keyframes goalSlide {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.goal-label {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.goal-input-row {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.goal-stepper {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.03);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  flex: 1;
+  transition: border-color 0.2s;
+}
+
+.goal-stepper:focus-within { border-color: var(--accent); }
+
+.goal-stepper button {
+  width: 56px;
+  height: 60px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 26px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  user-select: none;
+}
+
+.goal-stepper button:hover:not(:disabled) {
+  background: rgba(108,92,231,0.15);
+  color: var(--accent-2);
+}
+
+.goal-stepper button:active:not(:disabled) { transform: scale(0.92); }
+.goal-stepper button:disabled { opacity: 0.25; cursor: not-allowed; }
+
+.goal-stepper input[type="number"] {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-size: 28px;
+  font-weight: 800;
+  text-align: center;
+  outline: none;
+  font-family: inherit;
+  letter-spacing: -1px;
+  padding: 0 8px;
+  -moz-appearance: textfield;
+}
+
+.goal-stepper input[type="number"]::-webkit-outer-spin-button,
+.goal-stepper input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.goal-unit {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  background: rgba(255,255,255,0.03);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Быстрые пресеты */
+.goal-presets {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.goal-presets button {
+  flex: 1;
+  min-width: 60px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.03);
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  user-select: none;
+}
+
+.goal-presets button:hover {
+  background: rgba(108,92,231,0.12);
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.goal-presets button.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
 
 /* Прогресс дня */
 .day-progress {
@@ -540,7 +779,7 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
   transition: width 0.4s ease;
 }
 
-/* Список привычек */
+/* === Список привычек === */
 .habits { display: flex; flex-direction: column; gap: 12px; }
 
 .habit {
@@ -549,8 +788,8 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
   border-radius: 16px;
   padding: 16px;
   display: flex;
-  align-items: center;
-  gap: 14px;
+  flex-direction: column;
+  gap: 12px;
   transition: transform 0.15s, border-color 0.2s, background 0.2s;
   animation: slideIn 0.3s ease;
 }
@@ -566,6 +805,308 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
   border-color: rgba(0,184,148,0.5);
   background: linear-gradient(90deg, rgba(0,184,148,0.08), var(--card));
 }
+
+.habit-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.habit-info { flex: 1; min-width: 0; }
+
+.habit-name {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+
+.habit.done .habit-name { color: var(--muted); }
+
+.habit-meta {
+  font-size: 13px;
+  color: var(--muted);
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Счётчик */
+.counter-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.counter-main {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  height: 54px;
+}
+
+.counter-minus {
+  flex-shrink: 0;
+  width: 48px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.03);
+  color: var(--text);
+  font-size: 22px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  transition: all 0.15s;
+  user-select: none;
+}
+
+.counter-minus:hover:not(:disabled) {
+  background: rgba(255,107,107,0.12);
+  border-color: rgba(255,107,107,0.4);
+  color: var(--danger);
+}
+
+.counter-minus:active:not(:disabled) { transform: scale(0.94); }
+.counter-minus:disabled { opacity: 0.25; cursor: not-allowed; }
+
+.counter-display {
+  flex: 1;
+  position: relative;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.02);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.counter-display:hover { border-color: var(--accent); }
+
+.counter-display.complete {
+  border-color: rgba(0,184,148,0.5);
+  background: rgba(0,184,148,0.06);
+}
+
+.counter-display.pulse { animation: counterPulse 0.25s ease; }
+
+@keyframes counterPulse {
+  0% { transform: scale(1); }
+  40% { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
+
+.counter-bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.03);
+}
+
+.counter-bg-fill {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(108,92,231,0.35), rgba(162,155,254,0.35));
+  transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.counter-display.complete .counter-bg-fill {
+  background: linear-gradient(90deg, rgba(0,184,148,0.35), rgba(0,217,163,0.35));
+}
+
+.counter-text {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.counter-current {
+  font-size: 26px;
+  color: var(--text);
+  transition: color 0.2s;
+}
+
+.counter-display.complete .counter-current { color: var(--success); }
+
+.counter-sep {
+  font-size: 20px;
+  color: var(--muted);
+  opacity: 0.6;
+}
+
+.counter-goal {
+  font-size: 18px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.counter-hint {
+  position: absolute;
+  z-index: 1;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  font-weight: 600;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.counter-display.complete .counter-hint {
+  color: var(--success);
+  opacity: 0.9;
+}
+
+.counter-plus-group {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.counter-btn {
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(108,92,231,0.12);
+  color: var(--text);
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  user-select: none;
+  padding: 4px 10px;
+  min-width: 52px;
+  font-size: 18px;
+}
+
+.counter-btn:hover:not(:disabled) {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.counter-btn:active:not(:disabled) { transform: scale(0.94); }
+.counter-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+
+.counter-btn.plus5 {
+  background: rgba(255,159,67,0.12);
+  border-color: rgba(255,159,67,0.3);
+  color: #ff9f43;
+}
+
+.counter-btn.plus5:hover:not(:disabled) {
+  background: #ff9f43;
+  border-color: #ff9f43;
+  color: white;
+}
+
+/* Модалка */
+.counter-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+.counter-modal.active { display: flex; }
+
+.counter-modal-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 24px;
+  width: 100%;
+  max-width: 340px;
+  text-align: center;
+}
+
+.counter-modal-title {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.counter-modal-input {
+  width: 100%;
+  background: rgba(255,255,255,0.03);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  color: var(--text);
+  font-size: 32px;
+  font-weight: 800;
+  text-align: center;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  letter-spacing: -1px;
+  -moz-appearance: textfield;
+}
+
+.counter-modal-input::-webkit-outer-spin-button,
+.counter-modal-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.counter-modal-input:focus { border-color: var(--accent); }
+
+.counter-modal-goal {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 8px;
+  margin-bottom: 20px;
+}
+
+.counter-modal-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.counter-modal-buttons button {
+  flex: 1;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+
+.counter-modal-buttons button:hover { background: rgba(255,255,255,0.05); }
+
+.counter-modal-buttons button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.counter-modal-buttons button.primary:hover { background: var(--accent-2); }
 
 .check-btn {
   flex-shrink: 0;
@@ -589,25 +1130,6 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
   background: var(--success);
   border-color: var(--success);
   color: white;
-}
-
-.habit-info { flex: 1; min-width: 0; }
-
-.habit-name {
-  font-size: 16px;
-  font-weight: 500;
-  margin-bottom: 4px;
-  word-break: break-word;
-}
-
-.habit.done .habit-name { color: var(--muted); }
-
-.habit-meta {
-  font-size: 13px;
-  color: var(--muted);
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
 }
 
 .streak-widget {
@@ -704,13 +1226,19 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
   .gs-flame { font-size: 48px; }
   .gs-number { font-size: 36px; }
   .global-streak { padding: 18px; gap: 16px; }
-  .habit { padding: 12px; gap: 10px; }
+  .habit { padding: 12px; }
   .streak-widget { min-width: 54px; padding: 6px 8px; }
   .streak-count { font-size: 17px; }
   .delete-btn { opacity: 1; }
   .stats-section { padding: 16px; }
   .week-bars { height: 70px; }
   .week-labels { font-size: 10px; }
+  .counter-current { font-size: 22px; }
+  .counter-goal { font-size: 16px; }
+  .counter-btn { min-width: 46px; padding: 4px 6px; font-size: 16px; }
+  .goal-stepper button { width: 48px; height: 54px; font-size: 22px; }
+  .goal-stepper input[type="number"] { font-size: 24px; }
+  .toggle-box { width: 28px; height: 28px; font-size: 18px; }
 }
 </style>
 </head>
@@ -745,8 +1273,40 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
     </div>
 
     <form class="add-form" id="addForm">
-      <input type="text" id="habitInput" placeholder="Новая привычка..." maxlength="60" autocomplete="off">
-      <button type="submit" title="Добавить">+</button>
+      <div class="add-form-row">
+        <input type="text" id="habitInput" placeholder="Новая привычка..." maxlength="60" autocomplete="off">
+        <button type="submit" title="Добавить">+</button>
+      </div>
+
+      <!-- БОЛЬШОЙ ПЕРЕКЛЮЧАТЕЛЬ СЧЁТЧИКА -->
+      <div class="counter-toggle-row" id="counterToggleRow">
+        <input type="checkbox" id="counterToggle">
+        <div class="toggle-box">✓</div>
+        <div class="toggle-text">
+          <div class="toggle-title">🎯 Счётчик повторений</div>
+          <div class="toggle-sub" id="toggleSub">Сделал/не сделал</div>
+        </div>
+      </div>
+
+      <!-- БОЛЬШОЙ ВВОД ЦЕЛИ -->
+      <div class="goal-block" id="goalBlock">
+        <div class="goal-label">Цель в день</div>
+        <div class="goal-input-row">
+          <div class="goal-stepper">
+            <button type="button" id="goalMinus" title="−1">−</button>
+            <input type="number" id="goalInput" min="1" max="9999" value="10" inputmode="numeric">
+            <button type="button" id="goalPlus" title="+1">+</button>
+          </div>
+          <div class="goal-unit">раз</div>
+        </div>
+        <div class="goal-presets" id="goalPresets">
+          <button type="button" data-preset="5">5</button>
+          <button type="button" data-preset="10" class="active">10</button>
+          <button type="button" data-preset="20">20</button>
+          <button type="button" data-preset="30">30</button>
+          <button type="button" data-preset="50">50</button>
+        </div>
+      </div>
     </form>
 
     <div class="habits" id="habitsList"></div>
@@ -768,6 +1328,18 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
   </section>
 </div>
 
+<div class="counter-modal" id="counterModal">
+  <div class="counter-modal-box">
+    <div class="counter-modal-title">Введи значение</div>
+    <input type="number" class="counter-modal-input" id="counterModalInput" min="0" max="9999" inputmode="numeric">
+    <div class="counter-modal-goal" id="counterModalGoal"></div>
+    <div class="counter-modal-buttons">
+      <button id="counterModalCancel">Отмена</button>
+      <button class="primary" id="counterModalSave">Сохранить</button>
+    </div>
+  </div>
+</div>
+
 <nav class="bottom-nav">
   <button class="nav-btn active" data-tab="today">
     <span class="nav-icon">✅</span>
@@ -780,44 +1352,57 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
 </nav>
 
 <script>
-const STORAGE_KEY = 'habit-tracker-v2';
-const STATS_PERIOD_KEY = 'habit-tracker-stats-period';
-const ACTIVE_TAB_KEY = 'habit-tracker-active-tab';
+var STORAGE_KEY = 'habit-tracker-v3';
+var STATS_PERIOD_KEY = 'habit-tracker-stats-period';
+var ACTIVE_TAB_KEY = 'habit-tracker-active-tab';
 
-let state = loadState();
-let statsDays = parseInt(localStorage.getItem(STATS_PERIOD_KEY) || '7', 10);
-let activeTab = localStorage.getItem(ACTIVE_TAB_KEY) || 'today';
+var state = loadState();
+var statsDays = parseInt(localStorage.getItem(STATS_PERIOD_KEY) || '7', 10);
+var activeTab = localStorage.getItem(ACTIVE_TAB_KEY) || 'today';
+var editingHabitId = null;
 
 function dateKey(d) {
   return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 }
 function todayKey() { return dateKey(new Date()); }
 function yesterdayKey() {
-  const d = new Date();
+  var d = new Date();
   d.setDate(d.getDate() - 1);
   return dateKey(d);
 }
 function shiftKey(key, days) {
-  const parts = key.split('-').map(Number);
-  const date = new Date(parts[0], parts[1] - 1, parts[2]);
+  var parts = key.split('-').map(Number);
+  var date = new Date(parts[0], parts[1] - 1, parts[2]);
   date.setDate(date.getDate() + days);
   return dateKey(date);
 }
 function weekdayIndex(key) {
-  const parts = key.split('-').map(Number);
-  const day = new Date(parts[0], parts[1] - 1, parts[2]).getDay();
+  var parts = key.split('-').map(Number);
+  var day = new Date(parts[0], parts[1] - 1, parts[2]).getDay();
   return (day + 6) % 7;
 }
-const WEEKDAYS_SHORT = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+var WEEKDAYS_SHORT = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
 function loadState() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    var raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return JSON.parse(raw);
   } catch (e) {}
   try {
-    const old = localStorage.getItem('habit-tracker-v1');
-    if (old) return { habits: JSON.parse(old), bestStreak: 0 };
+    var old = localStorage.getItem('habit-tracker-v2');
+    if (old) {
+      var parsed = JSON.parse(old);
+      parsed.habits.forEach(function(h) {
+        if (h.goal === undefined) h.goal = 1;
+        if (!h.progress) h.progress = {};
+        if (h.completions && h.completions.length) {
+          h.completions.forEach(function(d) {
+            if (!h.progress[d]) h.progress[d] = 1;
+          });
+        }
+      });
+      return parsed;
+    }
   } catch (e) {}
   return { habits: [], bestStreak: 0 };
 }
@@ -825,30 +1410,153 @@ function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
-function isHabitRequiredOn(habit, key) {
-  const from = habit.mustCompleteFrom || habit.createdAt || '0000-00-00';
-  return from <= key;
+function getProgress(habit, key) {
+  if (!habit.progress) return 0;
+  return habit.progress[key] || 0;
+}
+function getGoal(habit) {
+  return habit.goal || 1;
 }
 function wasCompletedOn(habit, key) {
-  return (habit.completions || []).indexOf(key) !== -1;
+  return getProgress(habit, key) >= getGoal(habit);
 }
+function setProgress(habit, key, value) {
+  if (!habit.progress) habit.progress = {};
+  var goal = getGoal(habit);
+  if (value <= 0) {
+    delete habit.progress[key];
+  } else if (value >= goal) {
+    habit.progress[key] = goal;
+  } else {
+    habit.progress[key] = value;
+  }
+}
+
+function vibrate(ms) {
+  if (navigator.vibrate) {
+    try { navigator.vibrate(ms); } catch (e) {}
+  }
+}
+
+function pulseCounter(habitId) {
+  var el = document.querySelector('[data-display-id="' + habitId + '"]');
+  if (!el) return;
+  el.classList.remove('pulse');
+  void el.offsetWidth;
+  el.classList.add('pulse');
+}
+
+function incrementHabit(id, amount) {
+  amount = amount || 1;
+  var habit = state.habits.find(function(h) { return h.id === id; });
+  if (!habit) return;
+  var today = todayKey();
+  var current = getProgress(habit, today);
+  var goal = getGoal(habit);
+  if (current >= goal) return;
+  var newValue = Math.min(goal, current + amount);
+  if (newValue === current) return;
+  setProgress(habit, today, newValue);
+  saveState();
+  vibrate(10);
+  render();
+  pulseCounter(id);
+}
+
+function decrementHabit(id) {
+  var habit = state.habits.find(function(h) { return h.id === id; });
+  if (!habit) return;
+  var today = todayKey();
+  var current = getProgress(habit, today);
+  if (current <= 0) return;
+  setProgress(habit, today, current - 1);
+  saveState();
+  vibrate(10);
+  render();
+}
+
+function toggleHabit(id) {
+  var habit = state.habits.find(function(h) { return h.id === id; });
+  if (!habit) return;
+  var today = todayKey();
+  var current = getProgress(habit, today);
+  var goal = getGoal(habit);
+  if (current >= goal) {
+    setProgress(habit, today, 0);
+  } else {
+    setProgress(habit, today, goal);
+  }
+  saveState();
+  vibrate(15);
+  render();
+}
+
+function isDoneToday(habit) {
+  return wasCompletedOn(habit, todayKey());
+}
+
+function openCounterModal(habitId) {
+  var habit = state.habits.find(function(h) { return h.id === habitId; });
+  if (!habit) return;
+  editingHabitId = habitId;
+  var goal = getGoal(habit);
+  var current = getProgress(habit, todayKey());
+  var modal = document.getElementById('counterModal');
+  var input = document.getElementById('counterModalInput');
+  document.getElementById('counterModalGoal').textContent = 'Цель: ' + goal;
+  input.value = current;
+  input.max = goal;
+  modal.classList.add('active');
+  setTimeout(function() {
+    input.focus();
+    input.select();
+  }, 100);
+}
+
+function closeCounterModal() {
+  document.getElementById('counterModal').classList.remove('active');
+  editingHabitId = null;
+}
+
+function saveCounterModal() {
+  if (!editingHabitId) return;
+  var habit = state.habits.find(function(h) { return h.id === editingHabitId; });
+  if (!habit) { closeCounterModal(); return; }
+  var input = document.getElementById('counterModalInput');
+  var value = parseInt(input.value, 10) || 0;
+  if (value < 0) value = 0;
+  var goal = getGoal(habit);
+  if (value > goal) value = goal;
+  setProgress(habit, todayKey(), value);
+  saveState();
+  closeCounterModal();
+  vibrate(15);
+  render();
+}
+
+function isHabitRequiredOn(habit, key) {
+  var from = habit.mustCompleteFrom || habit.createdAt || '0000-00-00';
+  return from <= key;
+}
+
 function isDayComplete(key) {
-  const required = state.habits.filter(function(h) { return isHabitRequiredOn(h, key); });
+  var required = state.habits.filter(function(h) { return isHabitRequiredOn(h, key); });
   if (required.length === 0) return false;
   return required.every(function(h) { return wasCompletedOn(h, key); });
 }
+
 function getGlobalStreak() {
   if (state.habits.length === 0) return 0;
-  const today = todayKey();
-  const yesterday = yesterdayKey();
-  let cursor;
+  var today = todayKey();
+  var yesterday = yesterdayKey();
+  var cursor;
   if (isDayComplete(today)) cursor = today;
   else if (isDayComplete(yesterday)) cursor = yesterday;
   else return 0;
 
-  let streak = 0;
-  for (let i = 0; i < 3650; i++) {
-    const required = state.habits.filter(function(h) { return isHabitRequiredOn(h, cursor); });
+  var streak = 0;
+  for (var i = 0; i < 3650; i++) {
+    var required = state.habits.filter(function(h) { return isHabitRequiredOn(h, cursor); });
     if (required.length === 0) break;
     if (isDayComplete(cursor)) {
       streak++;
@@ -857,55 +1565,51 @@ function getGlobalStreak() {
   }
   return streak;
 }
+
 function updateBestStreak(current) {
   if (current > (state.bestStreak || 0)) {
     state.bestStreak = current;
     saveState();
   }
 }
+
 function getHabitStreak(habit) {
-  const dates = habit.completions || [];
-  if (dates.length === 0) return 0;
-  const set = {};
-  dates.forEach(function(d) { set[d] = true; });
-  const today = todayKey();
-  const yesterday = yesterdayKey();
-  let cursor;
-  if (set[today]) cursor = today;
-  else if (set[yesterday]) cursor = yesterday;
+  var today = todayKey();
+  var yesterday = yesterdayKey();
+  var cursor;
+  if (wasCompletedOn(habit, today)) cursor = today;
+  else if (wasCompletedOn(habit, yesterday)) cursor = yesterday;
   else return 0;
 
-  let streak = 0;
-  for (let i = 0; i < 3650; i++) {
-    if (set[cursor]) {
+  var streak = 0;
+  for (var i = 0; i < 3650; i++) {
+    if (wasCompletedOn(habit, cursor)) {
       streak++;
       cursor = shiftKey(cursor, -1);
     } else break;
   }
   return streak;
 }
-function isDoneToday(habit) {
-  return (habit.completions || []).indexOf(todayKey()) !== -1;
-}
+
 function isHabitRequiredToday(habit) {
   return isHabitRequiredOn(habit, todayKey());
 }
 
 function getPeriodKeys(days) {
-  const keys = [];
-  const today = todayKey();
+  var keys = [];
+  var today = todayKey();
   if (days === 0) {
     if (state.habits.length === 0) return [];
-    const earliest = state.habits.map(function(h) { return h.createdAt || today; }).sort()[0];
-    let cursor = earliest;
-    let safety = 0;
+    var earliest = state.habits.map(function(h) { return h.createdAt || today; }).sort()[0];
+    var cursor = earliest;
+    var safety = 0;
     while (cursor <= today && safety < 730) {
       keys.push(cursor);
       cursor = shiftKey(cursor, 1);
       safety++;
     }
   } else {
-    for (let i = days - 1; i >= 0; i--) {
+    for (var i = days - 1; i >= 0; i--) {
       keys.push(shiftKey(today, -i));
     }
   }
@@ -913,39 +1617,39 @@ function getPeriodKeys(days) {
 }
 
 function computeStats(days) {
-  const keys = getPeriodKeys(days);
+  var keys = getPeriodKeys(days);
   if (keys.length === 0 || state.habits.length === 0) return null;
 
-  let totalRequired = 0, totalDone = 0, completedDays = 0, trackedDays = 0;
-  const byWeekday = [[], [], [], [], [], [], []];
-  const perHabitMap = {};
+  var totalRequired = 0, totalDone = 0, completedDays = 0, trackedDays = 0;
+  var byWeekday = [[], [], [], [], [], [], []];
+  var perHabitMap = {};
   state.habits.forEach(function(h) { perHabitMap[h.id] = { name: h.name, done: 0, required: 0 }; });
 
   keys.forEach(function(key) {
-    const requiredHabits = state.habits.filter(function(h) { return isHabitRequiredOn(h, key); });
+    var requiredHabits = state.habits.filter(function(h) { return isHabitRequiredOn(h, key); });
     if (requiredHabits.length === 0) return;
     trackedDays++;
-    const doneHabits = requiredHabits.filter(function(h) { return wasCompletedOn(h, key); });
+    var doneHabits = requiredHabits.filter(function(h) { return wasCompletedOn(h, key); });
     totalRequired += requiredHabits.length;
     totalDone += doneHabits.length;
     if (doneHabits.length === requiredHabits.length) completedDays++;
     byWeekday[weekdayIndex(key)].push(doneHabits.length / requiredHabits.length);
     requiredHabits.forEach(function(h) {
-      const entry = perHabitMap[h.id];
+      var entry = perHabitMap[h.id];
       if (!entry) return;
       entry.required++;
       if (wasCompletedOn(h, key)) entry.done++;
     });
   });
 
-  const completionRate = totalRequired > 0 ? Math.round((totalDone / totalRequired) * 100) : 0;
-  const dayRate = trackedDays > 0 ? Math.round((completedDays / trackedDays) * 100) : 0;
-  const weekdayAvg = byWeekday.map(function(arr) {
+  var completionRate = totalRequired > 0 ? Math.round((totalDone / totalRequired) * 100) : 0;
+  var dayRate = trackedDays > 0 ? Math.round((completedDays / trackedDays) * 100) : 0;
+  var weekdayAvg = byWeekday.map(function(arr) {
     if (arr.length === 0) return 0;
     return Math.round((arr.reduce(function(a,b) { return a+b; }, 0) / arr.length) * 100);
   });
 
-  let bestWeekdayIdx = -1, bestWeekdayVal = -1;
+  var bestWeekdayIdx = -1, bestWeekdayVal = -1;
   weekdayAvg.forEach(function(v, i) {
     if (byWeekday[i].length > 0 && v > bestWeekdayVal) {
       bestWeekdayVal = v;
@@ -953,18 +1657,18 @@ function computeStats(days) {
     }
   });
 
-  let longestStreak = 0, currentRun = 0;
+  var longestStreak = 0, currentRun = 0;
   keys.forEach(function(key) {
-    const requiredHabits = state.habits.filter(function(h) { return isHabitRequiredOn(h, key); });
+    var requiredHabits = state.habits.filter(function(h) { return isHabitRequiredOn(h, key); });
     if (requiredHabits.length === 0) return;
-    const complete = requiredHabits.every(function(h) { return wasCompletedOn(h, key); });
+    var complete = requiredHabits.every(function(h) { return wasCompletedOn(h, key); });
     if (complete) {
       currentRun++;
       if (currentRun > longestStreak) longestStreak = currentRun;
     } else currentRun = 0;
   });
 
-  const perHabit = Object.keys(perHabitMap).map(function(k) { return perHabitMap[k]; })
+  var perHabit = Object.keys(perHabitMap).map(function(k) { return perHabitMap[k]; })
     .filter(function(e) { return e.required > 0; })
     .map(function(e) {
       return { name: e.name, percent: Math.round((e.done / e.required) * 100), done: e.done, required: e.required };
@@ -975,32 +1679,32 @@ function computeStats(days) {
 }
 
 function renderStats() {
-  const container = document.getElementById('statsContent');
+  var container = document.getElementById('statsContent');
   if (state.habits.length === 0) {
     container.innerHTML = '<div class="stats-empty">📊 Статистика появится, когда начнёшь отмечать привычки</div>';
     return;
   }
-  const s = computeStats(statsDays);
+  var s = computeStats(statsDays);
   if (!s) {
     container.innerHTML = '<div class="stats-empty">Пока нет данных за выбранный период</div>';
     return;
   }
-  const rateClass = s.completionRate >= 80 ? 'success' : s.completionRate >= 50 ? 'accent' : 'warn';
-  const maxWeekday = Math.max.apply(null, s.weekdayAvg.concat([1]));
-  const barsHtml = s.weekdayAvg.map(function(val, i) {
-    const heightPct = (val / maxWeekday) * 100;
-    const isBest = i === s.bestWeekdayIdx && val > 0;
-    const hasData = s.byWeekday[i].length > 0;
+  var rateClass = s.completionRate >= 80 ? 'success' : s.completionRate >= 50 ? 'accent' : 'warn';
+  var maxWeekday = Math.max.apply(null, s.weekdayAvg.concat([1]));
+  var barsHtml = s.weekdayAvg.map(function(val, i) {
+    var heightPct = (val / maxWeekday) * 100;
+    var isBest = i === s.bestWeekdayIdx && val > 0;
+    var hasData = s.byWeekday[i].length > 0;
     return '<div class="week-bar-wrap">' +
       '<div class="week-bar ' + (isBest ? 'best' : '') + '" style="height: ' + (hasData ? Math.max(heightPct, 3) : 0) + '%">' +
         (hasData ? '<span class="week-bar-value">' + val + '%</span>' : '') +
       '</div></div>';
   }).join('');
 
-  const labelsHtml = WEEKDAYS_SHORT.map(function(d) { return '<div>' + d + '</div>'; }).join('');
+  var labelsHtml = WEEKDAYS_SHORT.map(function(d) { return '<div>' + d + '</div>'; }).join('');
 
-  const perHabitHtml = s.perHabit.map(function(h) {
-    const cls = h.percent >= 80 ? '' : h.percent >= 50 ? 'mid' : 'low';
+  var perHabitHtml = s.perHabit.map(function(h) {
+    var cls = h.percent >= 80 ? '' : h.percent >= 50 ? 'mid' : 'low';
     return '<div class="ph-row">' +
       '<div class="ph-head">' +
         '<div class="ph-name">' + escapeHtml(h.name) + '</div>' +
@@ -1028,18 +1732,6 @@ function renderStats() {
     '</div>';
 }
 
-function toggleHabit(id) {
-  const habit = state.habits.find(function(h) { return h.id === id; });
-  if (!habit) return;
-  if (!habit.completions) habit.completions = [];
-  const today = todayKey();
-  const idx = habit.completions.indexOf(today);
-  if (idx === -1) habit.completions.push(today);
-  else habit.completions.splice(idx, 1);
-  saveState();
-  render();
-}
-
 function deleteHabit(id) {
   if (!confirm('Удалить привычку?')) return;
   state.habits = state.habits.filter(function(h) { return h.id !== id; });
@@ -1047,15 +1739,16 @@ function deleteHabit(id) {
   render();
 }
 
-function addHabit(name) {
-  const today = todayKey();
-  const requiredToday = state.habits.filter(function(h) { return isHabitRequiredToday(h); });
-  const dayClosedBefore = requiredToday.length > 0 && requiredToday.every(function(h) { return wasCompletedOn(h, today); });
-  const mustCompleteFrom = dayClosedBefore ? shiftKey(today, 1) : today;
+function addHabit(name, goal) {
+  var today = todayKey();
+  var requiredToday = state.habits.filter(function(h) { return isHabitRequiredToday(h); });
+  var dayClosedBefore = requiredToday.length > 0 && requiredToday.every(function(h) { return wasCompletedOn(h, today); });
+  var mustCompleteFrom = dayClosedBefore ? shiftKey(today, 1) : today;
   state.habits.push({
     id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
     name: name.trim(),
-    completions: [],
+    goal: goal || 1,
+    progress: {},
     createdAt: today,
     mustCompleteFrom: mustCompleteFrom
   });
@@ -1078,31 +1771,31 @@ function switchTab(tab) {
 }
 
 function render() {
-  const list = document.getElementById('habitsList');
+  var list = document.getElementById('habitsList');
   document.getElementById('todayDate').textContent = new Date().toLocaleDateString('ru-RU', {
     day: 'numeric', month: 'long', weekday: 'short'
   });
 
-  const globalStreak = getGlobalStreak();
+  var globalStreak = getGlobalStreak();
   updateBestStreak(globalStreak);
 
-  const gsEl = document.getElementById('globalStreak');
+  var gsEl = document.getElementById('globalStreak');
   document.getElementById('gsNumber').textContent = globalStreak;
   document.getElementById('gsUnit').textContent = pluralDays(globalStreak);
   document.getElementById('gsBest').textContent = 'Рекорд: ' + (state.bestStreak || 0);
 
   gsEl.classList.remove('active', 'at-risk');
 
-  const requiredToday = state.habits.filter(isHabitRequiredToday);
-  const doneToday = requiredToday.filter(isDoneToday).length;
-  const totalToday = requiredToday.length;
-  const gsStatus = document.getElementById('gsStatus');
+  var requiredToday = state.habits.filter(isHabitRequiredToday);
+  var doneToday = requiredToday.filter(isDoneToday).length;
+  var totalToday = requiredToday.length;
+  var gsStatus = document.getElementById('gsStatus');
 
   if (state.habits.length === 0) {
     gsStatus.textContent = 'Добавь привычки, чтобы начать';
     gsStatus.className = 'gs-status';
   } else {
-    const allDone = totalToday > 0 && doneToday === totalToday;
+    var allDone = totalToday > 0 && doneToday === totalToday;
     if (allDone && globalStreak > 0) {
       gsEl.classList.add('active');
       gsStatus.textContent = '🎉 Все выполнено! Стрик продолжается';
@@ -1112,7 +1805,7 @@ function render() {
       gsStatus.textContent = '⚠️ Осталось ' + (totalToday - doneToday) + ' — не разорви цепочку!';
       gsStatus.className = 'gs-status warn';
     } else {
-      const wasYesterday = isDayComplete(yesterdayKey());
+      var wasYesterday = isDayComplete(yesterdayKey());
       if (wasYesterday) {
         gsStatus.textContent = 'Выполни все сегодня, чтобы продлить стрик';
         gsStatus.className = 'gs-status warn';
@@ -1131,27 +1824,72 @@ function render() {
     list.innerHTML = '<div class="empty"><div class="empty-icon">🌱</div><p>Пока нет привычек.<br>Добавь первую — и общий стрик начнёт расти,<br>когда выполнишь всё за день!</p></div>';
   } else {
     list.innerHTML = state.habits.map(function(habit) {
-      const done = isDoneToday(habit);
-      const streak = getHabitStreak(habit);
-      const totalDone = (habit.completions || []).length;
-      const required = isHabitRequiredToday(habit);
-      const startsTomorrow = !required && habit.mustCompleteFrom === shiftKey(todayKey(), 1);
+      var done = isDoneToday(habit);
+      var streak = getHabitStreak(habit);
+      var goal = getGoal(habit);
+      var hasCounter = goal > 1;
+      var current = getProgress(habit, todayKey());
+      var required = isHabitRequiredToday(habit);
+      var startsTomorrow = !required && habit.mustCompleteFrom === shiftKey(todayKey(), 1);
+
+      var topControl;
+      if (hasCounter) {
+        var remaining = goal - current;
+        topControl =
+          '<div style="flex-shrink:0; text-align:center; padding:8px 12px; border-radius:12px; background:rgba(255,255,255,0.03); border:1px solid var(--border); min-width:70px;">' +
+            '<div style="font-size:18px; font-weight:800; color:' + (done ? 'var(--success)' : 'var(--text)') + '; line-height:1;">' + current + '<span style="color:var(--muted); font-size:13px;">/' + goal + '</span></div>' +
+            '<div style="font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:2px;">' + (done ? 'готово' : 'осталось ' + remaining) + '</div>' +
+          '</div>';
+      } else {
+        topControl = '<button class="check-btn" data-action="toggle" title="' + (done ? 'Отменить' : 'Отметить') + '">✓</button>';
+      }
+
+      var counterHtml = '';
+      if (hasCounter) {
+        var percentFill = Math.min(100, (current / goal) * 100);
+        var remaining = goal - current;
+        var canPlus5 = remaining >= 5;
+        var hintText = done ? '✓ выполнено' : 'нажми на полосу';
+        counterHtml =
+          '<div class="counter-block">' +
+            '<div class="counter-main">' +
+              '<button class="counter-minus" data-action="minus" ' + (current === 0 ? 'disabled' : '') + ' title="−1">−</button>' +
+              '<div class="counter-display ' + (done ? 'complete' : '') + '" data-action="edit" data-display-id="' + habit.id + '" title="Нажми, чтобы ввести вручную">' +
+                '<div class="counter-bg"><div class="counter-bg-fill" style="width:' + percentFill + '%"></div></div>' +
+                '<div class="counter-text">' +
+                  '<span class="counter-current">' + current + '</span>' +
+                  '<span class="counter-sep">/</span>' +
+                  '<span class="counter-goal">' + goal + '</span>' +
+                '</div>' +
+                '<div class="counter-hint">' + hintText + '</div>' +
+              '</div>' +
+              '<div class="counter-plus-group">' +
+                '<button class="counter-btn" data-action="plus" ' + (done ? 'disabled' : '') + ' title="+1">+1</button>' +
+                '<button class="counter-btn plus5" data-action="plus5" ' + (!canPlus5 ? 'disabled' : '') + ' title="+5">+5</button>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+      }
+
       return '<div class="habit ' + (done ? 'done' : '') + '" data-id="' + habit.id + '">' +
-        '<button class="check-btn" data-action="toggle" title="' + (done ? 'Отменить' : 'Отметить') + '">✓</button>' +
-        '<div class="habit-info">' +
-          '<div class="habit-name">' + escapeHtml(habit.name) + '</div>' +
-          '<div class="habit-meta">' +
-            (startsTomorrow ? '<span style="color:#6c5ce7">✨ со след. дня в стрике</span>' : '') +
-            '<span>Всего: ' + totalDone + '</span>' +
-            (streak > 0 ? '<span>🔥 ' + streak + ' ' + pluralDays(streak) + ' подряд</span>' : '') +
+        '<div class="habit-top">' +
+          topControl +
+          '<div class="habit-info">' +
+            '<div class="habit-name">' + escapeHtml(habit.name) + '</div>' +
+            '<div class="habit-meta">' +
+              (startsTomorrow ? '<span style="color:#6c5ce7">✨ со след. дня в стрике</span>' : '') +
+              (hasCounter ? '<span>🎯 цель: ' + goal + ' раз</span>' : '') +
+              (streak > 0 ? '<span>🔥 ' + streak + ' ' + pluralDays(streak) + ' подряд</span>' : '') +
+            '</div>' +
           '</div>' +
+          '<div class="streak-widget ' + (streak > 0 ? 'active' : '') + '">' +
+            '<div class="streak-flame">🔥</div>' +
+            '<div class="streak-count">' + streak + '</div>' +
+            '<div class="streak-label">дней</div>' +
+          '</div>' +
+          '<button class="delete-btn" data-action="delete" title="Удалить">✕</button>' +
         '</div>' +
-        '<div class="streak-widget ' + (streak > 0 ? 'active' : '') + '">' +
-          '<div class="streak-flame">🔥</div>' +
-          '<div class="streak-count">' + streak + '</div>' +
-          '<div class="streak-label">дней</div>' +
-        '</div>' +
-        '<button class="delete-btn" data-action="delete" title="Удалить">✕</button>' +
+        counterHtml +
       '</div>';
     }).join('');
   }
@@ -1160,7 +1898,7 @@ function render() {
 }
 
 function pluralDays(n) {
-  const mod10 = n % 10, mod100 = n % 100;
+  var mod10 = n % 10, mod100 = n % 100;
   if (mod10 === 1 && mod100 !== 11) return 'день';
   if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return 'дня';
   return 'дней';
@@ -1172,26 +1910,120 @@ function escapeHtml(str) {
   });
 }
 
+// ============ СОБЫТИЯ ФОРМЫ ============
+
+// Обновление подписи под переключателем
+function updateToggleSub() {
+  var on = document.getElementById('counterToggle').checked;
+  document.getElementById('toggleSub').textContent = on
+    ? 'Считать количество повторений'
+    : 'Сделал / не сделал';
+}
+
+// Клик по всей строке переключателя — включает/выключает
+document.getElementById('counterToggleRow').addEventListener('click', function(e) {
+  var checkbox = document.getElementById('counterToggle');
+  // Если клик не по самому чекбоксу — переключаем
+  if (e.target !== checkbox) {
+    checkbox.checked = !checkbox.checked;
+  }
+  // Обновляем визуал
+  this.classList.toggle('active', checkbox.checked);
+  document.getElementById('goalBlock').classList.toggle('active', checkbox.checked);
+  updateToggleSub();
+  if (checkbox.checked) {
+    setTimeout(function() {
+      document.getElementById('goalInput').focus();
+      document.getElementById('goalInput').select();
+    }, 200);
+  }
+});
+
+// Кнопки − и + у цели
+document.getElementById('goalMinus').addEventListener('click', function() {
+  var input = document.getElementById('goalInput');
+  var v = parseInt(input.value, 10) || 1;
+  if (v > 1) input.value = v - 1;
+  syncPresets();
+});
+document.getElementById('goalPlus').addEventListener('click', function() {
+  var input = document.getElementById('goalInput');
+  var v = parseInt(input.value, 10) || 0;
+  if (v < 9999) input.value = v + 1;
+  syncPresets();
+});
+
+// Ручной ввод цели — обновляем пресеты
+document.getElementById('goalInput').addEventListener('input', syncPresets);
+
+function syncPresets() {
+  var v = parseInt(document.getElementById('goalInput').value, 10);
+  document.querySelectorAll('#goalPresets button').forEach(function(b) {
+    b.classList.toggle('active', parseInt(b.dataset.preset, 10) === v);
+  });
+}
+
+// Пресеты
+document.getElementById('goalPresets').addEventListener('click', function(e) {
+  var btn = e.target.closest('button');
+  if (!btn) return;
+  document.getElementById('goalInput').value = btn.dataset.preset;
+  syncPresets();
+  vibrate(10);
+});
+
+// Отправка формы
 document.getElementById('addForm').addEventListener('submit', function(e) {
   e.preventDefault();
-  const input = document.getElementById('habitInput');
-  const value = input.value.trim();
+  var input = document.getElementById('habitInput');
+  var value = input.value.trim();
   if (!value) return;
-  addHabit(value);
+  var useCounter = document.getElementById('counterToggle').checked;
+  var goal = 1;
+  if (useCounter) {
+    goal = parseInt(document.getElementById('goalInput').value, 10) || 1;
+    if (goal < 1) goal = 1;
+    if (goal > 9999) goal = 9999;
+  }
+  addHabit(value, goal);
   input.value = '';
+  document.getElementById('counterToggle').checked = false;
+  document.getElementById('counterToggleRow').classList.remove('active');
+  document.getElementById('goalBlock').classList.remove('active');
+  document.getElementById('goalInput').value = '10';
+  syncPresets();
+  updateToggleSub();
   input.focus();
 });
 
+// Делегирование клика по привычкам
 document.getElementById('habitsList').addEventListener('click', function(e) {
-  const btn = e.target.closest('[data-action]');
-  if (!btn) return;
-  const id = btn.closest('.habit').dataset.id;
-  if (btn.dataset.action === 'toggle') toggleHabit(id);
-  if (btn.dataset.action === 'delete') deleteHabit(id);
+  var el = e.target.closest('[data-action]');
+  if (!el) return;
+  var habitEl = el.closest('.habit');
+  if (!habitEl) return;
+  var id = habitEl.dataset.id;
+  var action = el.dataset.action;
+  if (action === 'toggle') toggleHabit(id);
+  if (action === 'delete') deleteHabit(id);
+  if (action === 'plus') incrementHabit(id, 1);
+  if (action === 'plus5') incrementHabit(id, 5);
+  if (action === 'minus') decrementHabit(id);
+  if (action === 'edit') openCounterModal(id);
+});
+
+document.getElementById('counterModalCancel').addEventListener('click', closeCounterModal);
+document.getElementById('counterModalSave').addEventListener('click', saveCounterModal);
+document.getElementById('counterModal').addEventListener('click', function(e) {
+  if (e.target.id === 'counterModal') closeCounterModal();
+});
+document.getElementById('counterModalInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') saveCounterModal();
+  if (e.key === 'Escape') closeCounterModal();
 });
 
 document.getElementById('statsPeriod').addEventListener('click', function(e) {
-  const btn = e.target.closest('button');
+  var btn = e.target.closest('button');
   if (!btn) return;
   statsDays = parseInt(btn.dataset.days, 10);
   localStorage.setItem(STATS_PERIOD_KEY, String(statsDays));
@@ -1202,7 +2034,7 @@ document.getElementById('statsPeriod').addEventListener('click', function(e) {
 });
 
 document.querySelector('.bottom-nav').addEventListener('click', function(e) {
-  const btn = e.target.closest('.nav-btn');
+  var btn = e.target.closest('.nav-btn');
   if (!btn) return;
   switchTab(btn.dataset.tab);
 });
@@ -1211,7 +2043,7 @@ document.querySelectorAll('#statsPeriod button').forEach(function(b) {
   b.classList.toggle('active', parseInt(b.dataset.days, 10) === statsDays);
 });
 
-let lastDay = todayKey();
+var lastDay = todayKey();
 document.addEventListener('visibilitychange', function() {
   if (!document.hidden && todayKey() !== lastDay) {
     lastDay = todayKey();
