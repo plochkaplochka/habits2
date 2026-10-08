@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Трекер привычек</title>
+<meta name="description" content="Отслеживай привычки, не разрывай стрик">
+<meta name="theme-color" content="#0f1117">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+<style>
+:root {
+  --bg: #0f1117;
+  --card: #1a1d27;
+  --card-hover: #222633;
+  --accent: #6c5ce7;
+  --accent-2: #a29bfe;
+  --success: #00b894;
+  --danger: #ff6b6b;
+  --text: #e8eaf0;
+  --muted: #8b90a0;
+  --border: #2a2e3d;
+  --nav-height: 68px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 24px 16px calc(var(--nav-height) + 24px);
+  background-image: radial-gradient(circle at 20% 0%, rgba(108,92,231,0.15), transparent 50%);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.container { max-width: 720px; margin: 0 auto; }
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+
+.date-badge {
+  color: var(--muted);
+  font-size: 14px;
+  background: var(--card);
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+
+/* Вкладки */
+.tab-panel { display: none; animation: fadeIn 0.25s ease; }
+.tab-panel.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Нижняя навигация */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-height);
+  background: rgba(20, 23, 32, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  z-index: 100;
+  padding: 8px 16px;
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+}
+
+.nav-btn {
+  flex: 1;
+  max-width: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.nav-btn:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+
+.nav-btn.active {
+  color: var(--accent-2);
+  background: rgba(108,92,231,0.12);
+}
+
+.nav-btn.active::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 3px;
+  background: var(--accent-2);
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 0 12px var(--accent);
+}
+
+.nav-icon {
+  font-size: 22px;
+  line-height: 1;
+  transition: transform 0.2s;
+}
+
+.nav-btn.active .nav-icon { transform: scale(1.1); }
+
+/* Общий стрик */
+.global-streak {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 22px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s ease;
+}
+
+.global-streak::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 50%, rgba(255,159,67,0.18), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+
+.global-streak.active {
+  border-color: rgba(255,159,67,0.45);
+  box-shadow: 0 0 40px rgba(255,159,67,0.12), inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.global-streak.active::before { opacity: 1; }
+
+.global-streak.at-risk { border-color: rgba(255,107,107,0.4); }
+
+.global-streak.at-risk::before {
+  background: radial-gradient(circle at 20% 50%, rgba(255,107,107,0.15), transparent 60%);
+  opacity: 1;
+}
+
+.gs-flame {
+  font-size: 62px;
+  line-height: 1;
+  filter: grayscale(1) opacity(0.35);
+  transition: filter 0.4s, transform 0.4s;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.global-streak.active .gs-flame {
+  filter: none;
+  animation: bigFlicker 2.2s ease-in-out infinite;
+}
+
+@keyframes bigFlicker {
+  0%, 100% { transform: scale(1) rotate(-2deg); }
+  50% { transform: scale(1.1) rotate(2deg); }
+}
+
+.gs-info { flex: 1; position: relative; z-index: 1; min-width: 0; }
+
+.gs-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.gs-number {
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -1.5px;
+  color: var(--muted);
+  transition: color 0.4s;
+}
+
+.global-streak.active .gs-number {
+  color: #ff9f43;
+  text-shadow: 0 0 30px rgba(255,159,67,0.4);
+}
+
+.gs-unit { font-size: 16px; font-weight: 600; color: var(--muted); margin-left: 6px; }
+
+.gs-status {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+.gs-status.warn { color: #ffb84d; }
+
+.gs-best {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  font-size: 11px;
+  color: var(--muted);
+  background: rgba(255,255,255,0.04);
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  z-index: 1;
+}
+
+/* Статистика */
+.stats-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.stats-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.stats-title {
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stats-period {
+  display: flex;
+  gap: 4px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 10px;
+  padding: 3px;
+  border: 1px solid var(--border);
+}
+
+.stats-period button {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.stats-period button:hover { color: var(--text); }
+
+.stats-period button.active {
+  background: var(--accent);
+  color: white;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.stat-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 12px;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.stat-card:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(108,92,231,0.4);
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.stat-value.accent { color: var(--accent-2); }
+.stat-value.success { color: var(--success); }
+.stat-value.warn { color: #ffb84d; }
+
+.stat-label {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.week-chart { margin-bottom: 18px; }
+
+.week-chart-title {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.week-bars {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  align-items: end;
+  height: 90px;
+  margin-bottom: 6px;
+}
+
+.week-bar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.week-bar {
+  width: 100%;
+  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+  border-radius: 6px 6px 3px 3px;
+  min-height: 3px;
+  transition: height 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+
+.week-bar.best {
+  background: linear-gradient(180deg, #ffb84d, #ff9f43);
+  box-shadow: 0 0 15px rgba(255,159,67,0.4);
+}
+
+.week-bar-value {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.week-bar.best .week-bar-value { color: #ff9f43; }
+
+.week-labels {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  font-weight: 600;
+}
+
+.per-habit {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.per-habit-title {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.ph-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ph-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  gap: 10px;
+}
+
+.ph-name {
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+
+.ph-value {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.ph-bar {
+  height: 6px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.ph-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--success));
+  border-radius: 3px;
+  width: 0%;
+  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.ph-fill.low { background: linear-gradient(90deg, #ff6b6b, #ffb84d); }
+.ph-fill.mid { background: linear-gradient(90deg, #ffb84d, #6c5ce7); }
+
+.stats-empty {
+  text-align: center;
+  padding: 24px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* Форма */
+.add-form { display: flex; gap: 10px; margin-bottom: 20px; }
+
+.add-form input {
+  flex: 1;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: var(--text);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.add-form input:focus { border-color: var(--accent); }
+
+.add-form button {
+  background: var(--accent);
+  border: none;
+  border-radius: 12px;
+  padding: 0 22px;
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.add-form button:hover { background: var(--accent-2); }
+.add-form button:active { transform: scale(0.96); }
+
+/* Прогресс дня */
+.day-progress {
+  margin-bottom: 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 18px;
+}
+
+.progress-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.progress-bar {
+  height: 8px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--success));
+  border-radius: 4px;
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+/* Список привычек */
+.habits { display: flex; flex-direction: column; gap: 12px; }
+
+.habit {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: transform 0.15s, border-color 0.2s, background 0.2s;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.habit:hover { background: var(--card-hover); }
+
+.habit.done {
+  border-color: rgba(0,184,148,0.5);
+  background: linear-gradient(90deg, rgba(0,184,148,0.08), var(--card));
+}
+
+.check-btn {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: transparent;
+  transition: all 0.2s;
+}
+
+.check-btn:hover { border-color: var(--success); }
+
+.habit.done .check-btn {
+  background: var(--success);
+  border-color: var(--success);
+  color: white;
+}
+
+.habit-info { flex: 1; min-width: 0; }
+
+.habit-name {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+
+.habit.done .habit-name { color: var(--muted); }
+
+.habit-meta {
+  font-size: 13px;
+  color: var(--muted);
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.streak-widget {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 62px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  transition: all 0.3s;
+}
+
+.streak-widget.active {
+  background: linear-gradient(135deg, rgba(255,159,67,0.18), rgba(255,107,107,0.12));
+  border-color: rgba(255,159,67,0.4);
+  box-shadow: 0 0 20px rgba(255,159,67,0.15);
+}
+
+.streak-flame {
+  font-size: 18px;
+  line-height: 1;
+  filter: grayscale(1) opacity(0.4);
+  transition: filter 0.3s, transform 0.3s;
+}
+
+.streak-widget.active .streak-flame {
+  filter: none;
+  animation: flicker 2s ease-in-out infinite;
+}
+
+@keyframes flicker {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.streak-count {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-top: 3px;
+  color: var(--muted);
+  transition: color 0.3s;
+}
+
+.streak-widget.active .streak-count { color: #ff9f43; }
+
+.streak-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.delete-btn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  opacity: 0;
+}
+
+.habit:hover .delete-btn { opacity: 1; }
+.delete-btn:hover { background: rgba(255,107,107,0.15); color: var(--danger); }
+
+.empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+}
+
+.empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+.empty p { font-size: 15px; line-height: 1.6; }
+
+@media (max-width: 600px) {
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 500px) {
+  h1 { font-size: 20px; }
+  .gs-flame { font-size: 48px; }
+  .gs-number { font-size: 36px; }
+  .global-streak { padding: 18px; gap: 16px; }
+  .habit { padding: 12px; gap: 10px; }
+  .streak-widget { min-width: 54px; padding: 6px 8px; }
+  .streak-count { font-size: 17px; }
+  .delete-btn { opacity: 1; }
+  .stats-section { padding: 16px; }
+  .week-bars { height: 70px; }
+  .week-labels { font-size: 10px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1 id="pageTitle">🔥 Трекер привычек</h1>
+    <div class="date-badge" id="todayDate"></div>
+  </header>
+
+  <section class="tab-panel active" id="tab-today">
+    <div class="global-streak" id="globalStreak">
+      <div class="gs-flame">🔥</div>
+      <div class="gs-info">
+        <div class="gs-label">Общий стрик</div>
+        <div>
+          <span class="gs-number" id="gsNumber">0</span><span class="gs-unit" id="gsUnit">дней</span>
+        </div>
+        <div class="gs-status" id="gsStatus">Добавь привычки, чтобы начать</div>
+      </div>
+      <div class="gs-best" id="gsBest">Рекорд: 0</div>
+    </div>
+
+    <div class="day-progress">
+      <div class="progress-head">
+        <span>Прогресс сегодня</span>
+        <span id="progressText">0 / 0</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <form class="add-form" id="addForm">
+      <input type="text" id="habitInput" placeholder="Новая привычка..." maxlength="60" autocomplete="off">
+      <button type="submit" title="Добавить">+</button>
+    </form>
+
+    <div class="habits" id="habitsList"></div>
+  </section>
+
+  <section class="tab-panel" id="tab-stats">
+    <div class="stats-section">
+      <div class="stats-head">
+        <div class="stats-title">📊 Обзор</div>
+        <div class="stats-period" id="statsPeriod">
+          <button data-days="7" class="active">7д</button>
+          <button data-days="30">30д</button>
+          <button data-days="90">90д</button>
+          <button data-days="0">Всё</button>
+        </div>
+      </div>
+      <div id="statsContent"></div>
+    </div>
+  </section>
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-btn active" data-tab="today">
+    <span class="nav-icon">✅</span>
+    <span>Сегодня</span>
+  </button>
+  <button class="nav-btn" data-tab="stats">
+    <span class="nav-icon">📊</span>
+    <span>Статистика</span>
+  </button>
+</nav>
+
+<script>
+const STORAGE_KEY = 'habit-tracker-v2';
+const STATS_PERIOD_KEY = 'habit-tracker-stats-period';
+const ACTIVE_TAB_KEY = 'habit-tracker-active-tab';
+
+let state = loadState();
+let statsDays = parseInt(localStorage.getItem(STATS_PERIOD_KEY) || '7', 10);
+let activeTab = localStorage.getItem(ACTIVE_TAB_KEY) || 'today';
+
+function dateKey(d) {
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function todayKey() { return dateKey(new Date()); }
+function yesterdayKey() {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return dateKey(d);
+}
+function shiftKey(key, days) {
+  const parts = key.split('-').map(Number);
+  const date = new Date(parts[0], parts[1] - 1, parts[2]);
+  date.setDate(date.getDate() + days);
+  return dateKey(date);
+}
+function weekdayIndex(key) {
+  const parts = key.split('-').map(Number);
+  const day = new Date(parts[0], parts[1] - 1, parts[2]).getDay();
+  return (day + 6) % 7;
+}
+const WEEKDAYS_SHORT = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  try {
+    const old = localStorage.getItem('habit-tracker-v1');
+    if (old) return { habits: JSON.parse(old), bestStreak: 0 };
+  } catch (e) {}
+  return { habits: [], bestStreak: 0 };
+}
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function isHabitRequiredOn(habit, key) {
+  const from = habit.mustCompleteFrom || habit.createdAt || '0000-00-00';
+  return from <= key;
+}
+function wasCompletedOn(habit, key) {
+  return (habit.completions || []).indexOf(key) !== -1;
+}
+function isDayComplete(key) {
+  const required = state.habits.filter(function(h) { return isHabitRequiredOn(h, key); });
+  if (required.length === 0) return false;
+  return required.every(function(h) { return wasCompletedOn(h, key); });
+}
+function getGlobalStreak() {
+  if (state.habits.length === 0) return 0;
+  const today = todayKey();
+  const yesterday = yesterdayKey();
+  let cursor;
+  if (isDayComplete(today)) cursor = today;
+  else if (isDayComplete(yesterday)) cursor = yesterday;
+  else return 0;
+
+  let streak = 0;
+  for (let i = 0; i < 3650; i++) {
+    const required = state.habits.filter(function(h) { return isHabitRequiredOn(h, cursor); });
+    if (required.length === 0) break;
+    if (isDayComplete(cursor)) {
+      streak++;
+      cursor = shiftKey(cursor, -1);
+    } else break;
+  }
+  return streak;
+}
+function updateBestStreak(current) {
+  if (current > (state.bestStreak || 0)) {
+    state.bestStreak = current;
+    saveState();
+  }
+}
+function getHabitStreak(habit) {
+  const dates = habit.completions || [];
+  if (dates.length === 0) return 0;
+  const set = {};
+  dates.forEach(function(d) { set[d] = true; });
+  const today = todayKey();
+  const yesterday = yesterdayKey();
+  let cursor;
+  if (set[today]) cursor = today;
+  else if (set[yesterday]) cursor = yesterday;
+  else return 0;
+
+  let streak = 0;
+  for (let i = 0; i < 3650; i++) {
+    if (set[cursor]) {
+      streak++;
+      cursor = shiftKey(cursor, -1);
+    } else break;
+  }
+  return streak;
+}
+function isDoneToday(habit) {
+  return (habit.completions || []).indexOf(todayKey()) !== -1;
+}
+function isHabitRequiredToday(habit) {
+  return isHabitRequiredOn(habit, todayKey());
+}
+
+function getPeriodKeys(days) {
+  const keys = [];
+  const today = todayKey();
+  if (days === 0) {
+    if (state.habits.length === 0) return [];
+    const earliest = state.habits.map(function(h) { return h.createdAt || today; }).sort()[0];
+    let cursor = earliest;
+    let safety = 0;
+    while (cursor <= today && safety < 730) {
+      keys.push(cursor);
+      cursor = shiftKey(cursor, 1);
+      safety++;
+    }
+  } else {
+    for (let i = days - 1; i >= 0; i--) {
+      keys.push(shiftKey(today, -i));
+    }
+  }
+  return keys;
+}
+
+function computeStats(days) {
+  const keys = getPeriodKeys(days);
+  if (keys.length === 0 || state.habits.length === 0) return null;
+
+  let totalRequired = 0, totalDone = 0, completedDays = 0, trackedDays = 0;
+  const byWeekday = [[], [], [], [], [], [], []];
+  const perHabitMap = {};
+  state.habits.forEach(function(h) { perHabitMap[h.id] = { name: h.name, done: 0, required: 0 }; });
+
+  keys.forEach(function(key) {
+    const requiredHabits = state.habits.filter(function(h) { return isHabitRequiredOn(h, key); });
+    if (requiredHabits.length === 0) return;
+    trackedDays++;
+    const doneHabits = requiredHabits.filter(function(h) { return wasCompletedOn(h, key); });
+    totalRequired += requiredHabits.length;
+    totalDone += doneHabits.length;
+    if (doneHabits.length === requiredHabits.length) completedDays++;
+    byWeekday[weekdayIndex(key)].push(doneHabits.length / requiredHabits.length);
+    requiredHabits.forEach(function(h) {
+      const entry = perHabitMap[h.id];
+      if (!entry) return;
+      entry.required++;
+      if (wasCompletedOn(h, key)) entry.done++;
+    });
+  });
+
+  const completionRate = totalRequired > 0 ? Math.round((totalDone / totalRequired) * 100) : 0;
+  const dayRate = trackedDays > 0 ? Math.round((completedDays / trackedDays) * 100) : 0;
+  const weekdayAvg = byWeekday.map(function(arr) {
+    if (arr.length === 0) return 0;
+    return Math.round((arr.reduce(function(a,b) { return a+b; }, 0) / arr.length) * 100);
+  });
+
+  let bestWeekdayIdx = -1, bestWeekdayVal = -1;
+  weekdayAvg.forEach(function(v, i) {
+    if (byWeekday[i].length > 0 && v > bestWeekdayVal) {
+      bestWeekdayVal = v;
+      bestWeekdayIdx = i;
+    }
+  });
+
+  let longestStreak = 0, currentRun = 0;
+  keys.forEach(function(key) {
+    const requiredHabits = state.habits.filter(function(h) { return isHabitRequiredOn(h, key); });
+    if (requiredHabits.length === 0) return;
+    const complete = requiredHabits.every(function(h) { return wasCompletedOn(h, key); });
+    if (complete) {
+      currentRun++;
+      if (currentRun > longestStreak) longestStreak = currentRun;
+    } else currentRun = 0;
+  });
+
+  const perHabit = Object.keys(perHabitMap).map(function(k) { return perHabitMap[k]; })
+    .filter(function(e) { return e.required > 0; })
+    .map(function(e) {
+      return { name: e.name, percent: Math.round((e.done / e.required) * 100), done: e.done, required: e.required };
+    })
+    .sort(function(a, b) { return b.percent - a.percent; });
+
+  return { completionRate, dayRate, completedDays, trackedDays, longestStreak, weekdayAvg, byWeekday, bestWeekdayIdx, bestWeekdayVal, perHabit };
+}
+
+function renderStats() {
+  const container = document.getElementById('statsContent');
+  if (state.habits.length === 0) {
+    container.innerHTML = '<div class="stats-empty">📊 Статистика появится, когда начнёшь отмечать привычки</div>';
+    return;
+  }
+  const s = computeStats(statsDays);
+  if (!s) {
+    container.innerHTML = '<div class="stats-empty">Пока нет данных за выбранный период</div>';
+    return;
+  }
+  const rateClass = s.completionRate >= 80 ? 'success' : s.completionRate >= 50 ? 'accent' : 'warn';
+  const maxWeekday = Math.max.apply(null, s.weekdayAvg.concat([1]));
+  const barsHtml = s.weekdayAvg.map(function(val, i) {
+    const heightPct = (val / maxWeekday) * 100;
+    const isBest = i === s.bestWeekdayIdx && val > 0;
+    const hasData = s.byWeekday[i].length > 0;
+    return '<div class="week-bar-wrap">' +
+      '<div class="week-bar ' + (isBest ? 'best' : '') + '" style="height: ' + (hasData ? Math.max(heightPct, 3) : 0) + '%">' +
+        (hasData ? '<span class="week-bar-value">' + val + '%</span>' : '') +
+      '</div></div>';
+  }).join('');
+
+  const labelsHtml = WEEKDAYS_SHORT.map(function(d) { return '<div>' + d + '</div>'; }).join('');
+
+  const perHabitHtml = s.perHabit.map(function(h) {
+    const cls = h.percent >= 80 ? '' : h.percent >= 50 ? 'mid' : 'low';
+    return '<div class="ph-row">' +
+      '<div class="ph-head">' +
+        '<div class="ph-name">' + escapeHtml(h.name) + '</div>' +
+        '<div class="ph-value">' + h.percent + '% · ' + h.done + '/' + h.required + '</div>' +
+      '</div>' +
+      '<div class="ph-bar"><div class="ph-fill ' + cls + '" style="width: ' + h.percent + '%"></div></div>' +
+    '</div>';
+  }).join('');
+
+  container.innerHTML =
+    '<div class="stat-grid">' +
+      '<div class="stat-card"><div class="stat-value ' + rateClass + '">' + s.completionRate + '%</div><div class="stat-label">Выполнено</div></div>' +
+      '<div class="stat-card"><div class="stat-value">' + s.dayRate + '%</div><div class="stat-label">Полных дней</div></div>' +
+      '<div class="stat-card"><div class="stat-value">' + s.completedDays + '</div><div class="stat-label">Дней закрыто</div></div>' +
+      '<div class="stat-card"><div class="stat-value warn">' + s.longestStreak + '</div><div class="stat-label">Лучший стрик</div></div>' +
+    '</div>' +
+    '<div class="week-chart">' +
+      '<div class="week-chart-title">По дням недели' + (s.bestWeekdayIdx >= 0 && s.bestWeekdayVal > 0 ? ' · лучший: ' + WEEKDAYS_SHORT[s.bestWeekdayIdx] + ' (' + s.bestWeekdayVal + '%)' : '') + '</div>' +
+      '<div class="week-bars">' + barsHtml + '</div>' +
+      '<div class="week-labels">' + labelsHtml + '</div>' +
+    '</div>' +
+    '<div class="per-habit">' +
+      '<div class="per-habit-title">По привычкам</div>' +
+      perHabitHtml +
+    '</div>';
+}
+
+function toggleHabit(id) {
+  const habit = state.habits.find(function(h) { return h.id === id; });
+  if (!habit) return;
+  if (!habit.completions) habit.completions = [];
+  const today = todayKey();
+  const idx = habit.completions.indexOf(today);
+  if (idx === -1) habit.completions.push(today);
+  else habit.completions.splice(idx, 1);
+  saveState();
+  render();
+}
+
+function deleteHabit(id) {
+  if (!confirm('Удалить привычку?')) return;
+  state.habits = state.habits.filter(function(h) { return h.id !== id; });
+  saveState();
+  render();
+}
+
+function addHabit(name) {
+  const today = todayKey();
+  const requiredToday = state.habits.filter(function(h) { return isHabitRequiredToday(h); });
+  const dayClosedBefore = requiredToday.length > 0 && requiredToday.every(function(h) { return wasCompletedOn(h, today); });
+  const mustCompleteFrom = dayClosedBefore ? shiftKey(today, 1) : today;
+  state.habits.push({
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    name: name.trim(),
+    completions: [],
+    createdAt: today,
+    mustCompleteFrom: mustCompleteFrom
+  });
+  saveState();
+  render();
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+  localStorage.setItem(ACTIVE_TAB_KEY, tab);
+  document.querySelectorAll('.tab-panel').forEach(function(p) {
+    p.classList.toggle('active', p.id === 'tab-' + tab);
+  });
+  document.querySelectorAll('.nav-btn').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.tab === tab);
+  });
+  document.getElementById('pageTitle').textContent = tab === 'stats' ? '📊 Статистика' : '🔥 Трекер привычек';
+  if (tab === 'stats') renderStats();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function render() {
+  const list = document.getElementById('habitsList');
+  document.getElementById('todayDate').textContent = new Date().toLocaleDateString('ru-RU', {
+    day: 'numeric', month: 'long', weekday: 'short'
+  });
+
+  const globalStreak = getGlobalStreak();
+  updateBestStreak(globalStreak);
+
+  const gsEl = document.getElementById('globalStreak');
+  document.getElementById('gsNumber').textContent = globalStreak;
+  document.getElementById('gsUnit').textContent = pluralDays(globalStreak);
+  document.getElementById('gsBest').textContent = 'Рекорд: ' + (state.bestStreak || 0);
+
+  gsEl.classList.remove('active', 'at-risk');
+
+  const requiredToday = state.habits.filter(isHabitRequiredToday);
+  const doneToday = requiredToday.filter(isDoneToday).length;
+  const totalToday = requiredToday.length;
+  const gsStatus = document.getElementById('gsStatus');
+
+  if (state.habits.length === 0) {
+    gsStatus.textContent = 'Добавь привычки, чтобы начать';
+    gsStatus.className = 'gs-status';
+  } else {
+    const allDone = totalToday > 0 && doneToday === totalToday;
+    if (allDone && globalStreak > 0) {
+      gsEl.classList.add('active');
+      gsStatus.textContent = '🎉 Все выполнено! Стрик продолжается';
+      gsStatus.className = 'gs-status';
+    } else if (globalStreak > 0) {
+      gsEl.classList.add('at-risk');
+      gsStatus.textContent = '⚠️ Осталось ' + (totalToday - doneToday) + ' — не разорви цепочку!';
+      gsStatus.className = 'gs-status warn';
+    } else {
+      const wasYesterday = isDayComplete(yesterdayKey());
+      if (wasYesterday) {
+        gsStatus.textContent = 'Выполни все сегодня, чтобы продлить стрик';
+        gsStatus.className = 'gs-status warn';
+      } else {
+        gsStatus.textContent = allDone ? '🎉 Отличное начало! Стрик пошёл' : 'Выполни все привычки, чтобы начать стрик';
+        gsStatus.className = 'gs-status';
+      }
+      if (allDone) gsEl.classList.add('active');
+    }
+  }
+
+  document.getElementById('progressText').textContent = doneToday + ' / ' + totalToday;
+  document.getElementById('progressFill').style.width = totalToday === 0 ? '0%' : ((doneToday / totalToday) * 100) + '%';
+
+  if (state.habits.length === 0) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">🌱</div><p>Пока нет привычек.<br>Добавь первую — и общий стрик начнёт расти,<br>когда выполнишь всё за день!</p></div>';
+  } else {
+    list.innerHTML = state.habits.map(function(habit) {
+      const done = isDoneToday(habit);
+      const streak = getHabitStreak(habit);
+      const totalDone = (habit.completions || []).length;
+      const required = isHabitRequiredToday(habit);
+      const startsTomorrow = !required && habit.mustCompleteFrom === shiftKey(todayKey(), 1);
+      return '<div class="habit ' + (done ? 'done' : '') + '" data-id="' + habit.id + '">' +
+        '<button class="check-btn" data-action="toggle" title="' + (done ? 'Отменить' : 'Отметить') + '">✓</button>' +
+        '<div class="habit-info">' +
+          '<div class="habit-name">' + escapeHtml(habit.name) + '</div>' +
+          '<div class="habit-meta">' +
+            (startsTomorrow ? '<span style="color:#6c5ce7">✨ со след. дня в стрике</span>' : '') +
+            '<span>Всего: ' + totalDone + '</span>' +
+            (streak > 0 ? '<span>🔥 ' + streak + ' ' + pluralDays(streak) + ' подряд</span>' : '') +
+          '</div>' +
+        '</div>' +
+        '<div class="streak-widget ' + (streak > 0 ? 'active' : '') + '">' +
+          '<div class="streak-flame">🔥</div>' +
+          '<div class="streak-count">' + streak + '</div>' +
+          '<div class="streak-label">дней</div>' +
+        '</div>' +
+        '<button class="delete-btn" data-action="delete" title="Удалить">✕</button>' +
+      '</div>';
+    }).join('');
+  }
+
+  if (activeTab === 'stats') renderStats();
+}
+
+function pluralDays(n) {
+  const mod10 = n % 10, mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return 'день';
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return 'дня';
+  return 'дней';
+}
+
+function escapeHtml(str) {
+  return str.replace(/[&<>"']/g, function(c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+
+document.getElementById('addForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const input = document.getElementById('habitInput');
+  const value = input.value.trim();
+  if (!value) return;
+  addHabit(value);
+  input.value = '';
+  input.focus();
+});
+
+document.getElementById('habitsList').addEventListener('click', function(e) {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const id = btn.closest('.habit').dataset.id;
+  if (btn.dataset.action === 'toggle') toggleHabit(id);
+  if (btn.dataset.action === 'delete') deleteHabit(id);
+});
+
+document.getElementById('statsPeriod').addEventListener('click', function(e) {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  statsDays = parseInt(btn.dataset.days, 10);
+  localStorage.setItem(STATS_PERIOD_KEY, String(statsDays));
+  document.querySelectorAll('#statsPeriod button').forEach(function(b) {
+    b.classList.toggle('active', b === btn);
+  });
+  renderStats();
+});
+
+document.querySelector('.bottom-nav').addEventListener('click', function(e) {
+  const btn = e.target.closest('.nav-btn');
+  if (!btn) return;
+  switchTab(btn.dataset.tab);
+});
+
+document.querySelectorAll('#statsPeriod button').forEach(function(b) {
+  b.classList.toggle('active', parseInt(b.dataset.days, 10) === statsDays);
+});
+
+let lastDay = todayKey();
+document.addEventListener('visibilitychange', function() {
+  if (!document.hidden && todayKey() !== lastDay) {
+    lastDay = todayKey();
+    render();
+  }
+});
+
+render();
+switchTab(activeTab);
+</script>
+</body>
+</html>
