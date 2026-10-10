@@ -2,10 +2,11 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 <title>Трекер привычек</title>
 <meta name="description" content="Отслеживай привычки, не разрывай стрик">
 <meta name="theme-color" content="#0f1117">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
 <style>
 :root {
@@ -32,7 +33,10 @@ body {
   padding: 24px 16px calc(var(--nav-height) + 24px);
   background-image: radial-gradient(circle at 20% 0%, rgba(108,92,231,0.15), transparent 50%);
   -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
+
+input, textarea { -webkit-user-select: text; user-select: text; }
 
 .container { max-width: 720px; margin: 0 auto; }
 
@@ -522,7 +526,7 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
 .add-form button[type="submit"]:hover { background: var(--accent-2); }
 .add-form button[type="submit"]:active { transform: scale(0.96); }
 
-/* ===== БОЛЬШОЙ ПЕРЕКЛЮЧАТЕЛЬ СЧЁТЧИКА ===== */
+/* Переключатель счётчика */
 .counter-toggle-row {
   display: flex;
   align-items: center;
@@ -547,7 +551,6 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
   border-color: var(--accent);
 }
 
-/* Скрываем настоящий чекбокс, но оставляем его в DOM для доступности */
 .counter-toggle-row input[type="checkbox"] {
   position: absolute;
   opacity: 0;
@@ -556,7 +559,6 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
   height: 0;
 }
 
-/* Кастомный большой чекбокс */
 .toggle-box {
   flex-shrink: 0;
   width: 32px;
@@ -582,10 +584,7 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
   box-shadow: 0 0 20px rgba(108,92,231,0.5);
 }
 
-.toggle-text {
-  flex: 1;
-  min-width: 0;
-}
+.toggle-text { flex: 1; min-width: 0; }
 
 .toggle-title {
   font-size: 16px;
@@ -595,9 +594,7 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
   transition: color 0.2s;
 }
 
-.counter-toggle-row.active .toggle-title {
-  color: var(--accent-2);
-}
+.counter-toggle-row.active .toggle-title { color: var(--accent-2); }
 
 .toggle-sub {
   font-size: 13px;
@@ -605,7 +602,7 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
   line-height: 1.4;
 }
 
-/* ===== БОЛЬШОЙ ВВОД ЦЕЛИ ===== */
+/* Ввод цели */
 .goal-block {
   display: none;
   flex-direction: column;
@@ -712,7 +709,6 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
   white-space: nowrap;
 }
 
-/* Быстрые пресеты */
 .goal-presets {
   display: flex;
   gap: 8px;
@@ -779,7 +775,7 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
   transition: width 0.4s ease;
 }
 
-/* === Список привычек === */
+/* Список привычек */
 .habits { display: flex; flex-direction: column; gap: 12px; }
 
 .habit {
@@ -804,6 +800,11 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
 .habit.done {
   border-color: rgba(0,184,148,0.5);
   background: linear-gradient(90deg, rgba(0,184,148,0.08), var(--card));
+}
+
+.habit.partial {
+  border-color: rgba(255,159,67,0.4);
+  background: linear-gradient(90deg, rgba(255,159,67,0.05), var(--card));
 }
 
 .habit-top {
@@ -894,6 +895,10 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
   background: rgba(0,184,148,0.06);
 }
 
+.counter-display.partial {
+  border-color: rgba(255,159,67,0.4);
+}
+
 .counter-display.pulse { animation: counterPulse 0.25s ease; }
 
 @keyframes counterPulse {
@@ -916,6 +921,10 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
 
 .counter-display.complete .counter-bg-fill {
   background: linear-gradient(90deg, rgba(0,184,148,0.35), rgba(0,217,163,0.35));
+}
+
+.counter-display.partial .counter-bg-fill {
+  background: linear-gradient(90deg, rgba(255,159,67,0.35), rgba(255,184,77,0.35));
 }
 
 .counter-text {
@@ -1265,7 +1274,7 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
     <div class="day-progress">
       <div class="progress-head">
         <span>Прогресс сегодня</span>
-        <span id="progressText">0 / 0</span>
+        <span id="progressText">0%</span>
       </div>
       <div class="progress-bar">
         <div class="progress-fill" id="progressFill"></div>
@@ -1278,7 +1287,6 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
         <button type="submit" title="Добавить">+</button>
       </div>
 
-      <!-- БОЛЬШОЙ ПЕРЕКЛЮЧАТЕЛЬ СЧЁТЧИКА -->
       <div class="counter-toggle-row" id="counterToggleRow">
         <input type="checkbox" id="counterToggle">
         <div class="toggle-box">✓</div>
@@ -1288,7 +1296,6 @@ h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
         </div>
       </div>
 
-      <!-- БОЛЬШОЙ ВВОД ЦЕЛИ -->
       <div class="goal-block" id="goalBlock">
         <div class="goal-label">Цель в день</div>
         <div class="goal-input-row">
@@ -1410,6 +1417,8 @@ function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
+// ============ ПРОГРЕСС ============
+
 function getProgress(habit, key) {
   if (!habit.progress) return 0;
   return habit.progress[key] || 0;
@@ -1417,9 +1426,23 @@ function getProgress(habit, key) {
 function getGoal(habit) {
   return habit.goal || 1;
 }
+
+// Процент выполнения привычки в конкретный день (0..1)
+function getHabitPercent(habit, key) {
+  var goal = getGoal(habit);
+  if (goal <= 1) {
+    return getProgress(habit, key) > 0 ? 1 : 0;
+  }
+  var current = getProgress(habit, key);
+  if (current >= goal) return 1;
+  return current / goal;
+}
+
+// Привычка полностью выполнена?
 function wasCompletedOn(habit, key) {
   return getProgress(habit, key) >= getGoal(habit);
 }
+
 function setProgress(habit, key, value) {
   if (!habit.progress) habit.progress = {};
   var goal = getGoal(habit);
@@ -1534,15 +1557,27 @@ function saveCounterModal() {
   render();
 }
 
+// ============ СТРИКИ ============
+
 function isHabitRequiredOn(habit, key) {
   var from = habit.mustCompleteFrom || habit.createdAt || '0000-00-00';
   return from <= key;
 }
 
+// День считается ЗАКРЫТЫМ (для стрика) только при 100% у всех
 function isDayComplete(key) {
   var required = state.habits.filter(function(h) { return isHabitRequiredOn(h, key); });
   if (required.length === 0) return false;
   return required.every(function(h) { return wasCompletedOn(h, key); });
+}
+
+// Общий процент выполнения дня (0..1)
+function getDayPercent(key) {
+  var required = state.habits.filter(function(h) { return isHabitRequiredOn(h, key); });
+  if (required.length === 0) return 0;
+  var sum = 0;
+  required.forEach(function(h) { sum += getHabitPercent(h, key); });
+  return sum / required.length;
 }
 
 function getGlobalStreak() {
@@ -1595,6 +1630,8 @@ function isHabitRequiredToday(habit) {
   return isHabitRequiredOn(habit, todayKey());
 }
 
+// ============ СТАТИСТИКА ============
+
 function getPeriodKeys(days) {
   var keys = [];
   var today = todayKey();
@@ -1620,30 +1657,54 @@ function computeStats(days) {
   var keys = getPeriodKeys(days);
   if (keys.length === 0 || state.habits.length === 0) return null;
 
-  var totalRequired = 0, totalDone = 0, completedDays = 0, trackedDays = 0;
+  // totalProgress — сумма процентов по всем обязательным привычкам за все дни
+  // totalRequired — сколько всего было "обязательных единиц"
+  var totalRequired = 0;
+  var totalProgressSum = 0;
+  var completedDays = 0;
+  var trackedDays = 0;
   var byWeekday = [[], [], [], [], [], [], []];
   var perHabitMap = {};
-  state.habits.forEach(function(h) { perHabitMap[h.id] = { name: h.name, done: 0, required: 0 }; });
+  state.habits.forEach(function(h) { perHabitMap[h.id] = { name: h.name, sum: 0, required: 0, complete: 0 }; });
 
   keys.forEach(function(key) {
     var requiredHabits = state.habits.filter(function(h) { return isHabitRequiredOn(h, key); });
     if (requiredHabits.length === 0) return;
     trackedDays++;
-    var doneHabits = requiredHabits.filter(function(h) { return wasCompletedOn(h, key); });
-    totalRequired += requiredHabits.length;
-    totalDone += doneHabits.length;
-    if (doneHabits.length === requiredHabits.length) completedDays++;
-    byWeekday[weekdayIndex(key)].push(doneHabits.length / requiredHabits.length);
+
+    var daySum = 0;
+    var allComplete = true;
+
     requiredHabits.forEach(function(h) {
+      var pct = getHabitPercent(h, key);
+      daySum += pct;
+      if (pct < 1) allComplete = false;
       var entry = perHabitMap[h.id];
-      if (!entry) return;
-      entry.required++;
-      if (wasCompletedOn(h, key)) entry.done++;
+      if (entry) {
+        entry.required++;
+        entry.sum += pct;
+        if (pct >= 1) entry.complete++;
+      }
     });
+
+    totalRequired += requiredHabits.length;
+    totalProgressSum += daySum;
+
+    if (allComplete) completedDays++;
+
+    var dayPercent = daySum / requiredHabits.length;
+    byWeekday[weekdayIndex(key)].push(dayPercent);
   });
 
-  var completionRate = totalRequired > 0 ? Math.round((totalDone / totalRequired) * 100) : 0;
-  var dayRate = trackedDays > 0 ? Math.round((completedDays / trackedDays) * 100) : 0;
+  // completionRate — процент выполнения по частичному прогрессу
+  var completionRate = totalRequired > 0
+    ? Math.round((totalProgressSum / totalRequired) * 100)
+    : 0;
+
+  var dayRate = trackedDays > 0
+    ? Math.round((completedDays / trackedDays) * 100)
+    : 0;
+
   var weekdayAvg = byWeekday.map(function(arr) {
     if (arr.length === 0) return 0;
     return Math.round((arr.reduce(function(a,b) { return a+b; }, 0) / arr.length) * 100);
@@ -1657,6 +1718,7 @@ function computeStats(days) {
     }
   });
 
+  // Лучший стрик — только полные дни (100%)
   var longestStreak = 0, currentRun = 0;
   keys.forEach(function(key) {
     var requiredHabits = state.habits.filter(function(h) { return isHabitRequiredOn(h, key); });
@@ -1671,11 +1733,28 @@ function computeStats(days) {
   var perHabit = Object.keys(perHabitMap).map(function(k) { return perHabitMap[k]; })
     .filter(function(e) { return e.required > 0; })
     .map(function(e) {
-      return { name: e.name, percent: Math.round((e.done / e.required) * 100), done: e.done, required: e.required };
+      return {
+        name: e.name,
+        // процент по частичному прогрессу
+        percent: Math.round((e.sum / e.required) * 100),
+        done: e.complete,
+        required: e.required
+      };
     })
     .sort(function(a, b) { return b.percent - a.percent; });
 
-  return { completionRate, dayRate, completedDays, trackedDays, longestStreak, weekdayAvg, byWeekday, bestWeekdayIdx, bestWeekdayVal, perHabit };
+  return {
+    completionRate: completionRate,
+    dayRate: dayRate,
+    completedDays: completedDays,
+    trackedDays: trackedDays,
+    longestStreak: longestStreak,
+    weekdayAvg: weekdayAvg,
+    byWeekday: byWeekday,
+    bestWeekdayIdx: bestWeekdayIdx,
+    bestWeekdayVal: bestWeekdayVal,
+    perHabit: perHabit
+  };
 }
 
 function renderStats() {
@@ -1708,7 +1787,7 @@ function renderStats() {
     return '<div class="ph-row">' +
       '<div class="ph-head">' +
         '<div class="ph-name">' + escapeHtml(h.name) + '</div>' +
-        '<div class="ph-value">' + h.percent + '% · ' + h.done + '/' + h.required + '</div>' +
+        '<div class="ph-value">' + h.percent + '% · ' + h.done + '/' + h.required + ' полных</div>' +
       '</div>' +
       '<div class="ph-bar"><div class="ph-fill ' + cls + '" style="width: ' + h.percent + '%"></div></div>' +
     '</div>';
@@ -1718,7 +1797,7 @@ function renderStats() {
     '<div class="stat-grid">' +
       '<div class="stat-card"><div class="stat-value ' + rateClass + '">' + s.completionRate + '%</div><div class="stat-label">Выполнено</div></div>' +
       '<div class="stat-card"><div class="stat-value">' + s.dayRate + '%</div><div class="stat-label">Полных дней</div></div>' +
-      '<div class="stat-card"><div class="stat-value">' + s.completedDays + '</div><div class="stat-label">Дней закрыто</div></div>' +
+      '<div class="stat-card"><div class="stat-value">' + s.completedDays + '</div><div class="stat-label">Дней 100%</div></div>' +
       '<div class="stat-card"><div class="stat-value warn">' + s.longestStreak + '</div><div class="stat-label">Лучший стрик</div></div>' +
     '</div>' +
     '<div class="week-chart">' +
@@ -1731,6 +1810,8 @@ function renderStats() {
       perHabitHtml +
     '</div>';
 }
+
+// ============ ДЕЙСТВИЯ ============
 
 function deleteHabit(id) {
   if (!confirm('Удалить привычку?')) return;
@@ -1770,6 +1851,8 @@ function switchTab(tab) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// ============ РЕНДЕР ============
+
 function render() {
   var list = document.getElementById('habitsList');
   document.getElementById('todayDate').textContent = new Date().toLocaleDateString('ru-RU', {
@@ -1787,58 +1870,91 @@ function render() {
   gsEl.classList.remove('active', 'at-risk');
 
   var requiredToday = state.habits.filter(isHabitRequiredToday);
-  var doneToday = requiredToday.filter(isDoneToday).length;
   var totalToday = requiredToday.length;
+  var dayPercent = getDayPercent(todayKey()); // 0..1
+  var dayPercentInt = Math.round(dayPercent * 100);
+
+  // сколько привычек полностью выполнено
+  var doneCount = requiredToday.filter(isDoneToday).length;
+  // сколько привычек частично выполнено (не 0 и не 100)
+  var partialCount = 0;
+  requiredToday.forEach(function(h) {
+    var p = getHabitPercent(h, todayKey());
+    if (p > 0 && p < 1) partialCount++;
+  });
+
   var gsStatus = document.getElementById('gsStatus');
 
   if (state.habits.length === 0) {
     gsStatus.textContent = 'Добавь привычки, чтобы начать';
     gsStatus.className = 'gs-status';
   } else {
-    var allDone = totalToday > 0 && doneToday === totalToday;
+    var allDone = totalToday > 0 && doneCount === totalToday;
+
     if (allDone && globalStreak > 0) {
       gsEl.classList.add('active');
       gsStatus.textContent = '🎉 Все выполнено! Стрик продолжается';
       gsStatus.className = 'gs-status';
+    } else if (allDone) {
+      gsEl.classList.add('active');
+      var wasYesterdayComplete = isDayComplete(yesterdayKey());
+      if (wasYesterdayComplete) {
+        gsStatus.textContent = '🎉 Все выполнено! Стрик продолжается';
+      } else {
+        gsStatus.textContent = '🎉 Отличное начало! Стрик пошёл';
+      }
+      gsStatus.className = 'gs-status';
     } else if (globalStreak > 0) {
       gsEl.classList.add('at-risk');
-      gsStatus.textContent = '⚠️ Осталось ' + (totalToday - doneToday) + ' — не разорви цепочку!';
+      if (partialCount > 0) {
+        gsStatus.textContent = '⚠️ Прогресс ' + dayPercentInt + '% — докончи до 100%, чтобы сохранить стрик';
+      } else {
+        gsStatus.textContent = '⚠️ Осталось ' + (totalToday - doneCount) + ' — не разорви цепочку!';
+      }
       gsStatus.className = 'gs-status warn';
     } else {
       var wasYesterday = isDayComplete(yesterdayKey());
       if (wasYesterday) {
-        gsStatus.textContent = 'Выполни все сегодня, чтобы продлить стрик';
+        gsStatus.textContent = 'Выполни все сегодня на 100%, чтобы продлить стрик';
         gsStatus.className = 'gs-status warn';
       } else {
-        gsStatus.textContent = allDone ? '🎉 Отличное начало! Стрик пошёл' : 'Выполни все привычки, чтобы начать стрик';
+        if (dayPercentInt > 0) {
+          gsStatus.textContent = 'Прогресс ' + dayPercentInt + '% — доведи до 100% и запусти стрик';
+        } else {
+          gsStatus.textContent = 'Выполни все привычки на 100%, чтобы начать стрик';
+        }
         gsStatus.className = 'gs-status';
       }
-      if (allDone) gsEl.classList.add('active');
     }
   }
 
-  document.getElementById('progressText').textContent = doneToday + ' / ' + totalToday;
-  document.getElementById('progressFill').style.width = totalToday === 0 ? '0%' : ((doneToday / totalToday) * 100) + '%';
+  // Прогресс дня — теперь в процентах с дробной частью
+  document.getElementById('progressText').textContent =
+    dayPercentInt + '%' + (totalToday > 0 ? ' (' + doneCount + ' из ' + totalToday + ' полных)' : '');
+  document.getElementById('progressFill').style.width = (dayPercent * 100) + '%';
 
   if (state.habits.length === 0) {
     list.innerHTML = '<div class="empty"><div class="empty-icon">🌱</div><p>Пока нет привычек.<br>Добавь первую — и общий стрик начнёт расти,<br>когда выполнишь всё за день!</p></div>';
   } else {
     list.innerHTML = state.habits.map(function(habit) {
+      var today = todayKey();
       var done = isDoneToday(habit);
       var streak = getHabitStreak(habit);
       var goal = getGoal(habit);
       var hasCounter = goal > 1;
-      var current = getProgress(habit, todayKey());
+      var current = getProgress(habit, today);
+      var percent = getHabitPercent(habit, today);
+      var isPartial = percent > 0 && percent < 1;
       var required = isHabitRequiredToday(habit);
-      var startsTomorrow = !required && habit.mustCompleteFrom === shiftKey(todayKey(), 1);
+      var startsTomorrow = !required && habit.mustCompleteFrom === shiftKey(today, 1);
 
       var topControl;
       if (hasCounter) {
         var remaining = goal - current;
         topControl =
           '<div style="flex-shrink:0; text-align:center; padding:8px 12px; border-radius:12px; background:rgba(255,255,255,0.03); border:1px solid var(--border); min-width:70px;">' +
-            '<div style="font-size:18px; font-weight:800; color:' + (done ? 'var(--success)' : 'var(--text)') + '; line-height:1;">' + current + '<span style="color:var(--muted); font-size:13px;">/' + goal + '</span></div>' +
-            '<div style="font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:2px;">' + (done ? 'готово' : 'осталось ' + remaining) + '</div>' +
+            '<div style="font-size:18px; font-weight:800; color:' + (done ? 'var(--success)' : (isPartial ? '#ff9f43' : 'var(--text)')) + '; line-height:1;">' + current + '<span style="color:var(--muted); font-size:13px;">/' + goal + '</span></div>' +
+            '<div style="font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:2px;">' + (done ? '✓ готово' : ('осталось ' + remaining)) + '</div>' +
           '</div>';
       } else {
         topControl = '<button class="check-btn" data-action="toggle" title="' + (done ? 'Отменить' : 'Отметить') + '">✓</button>';
@@ -1846,15 +1962,19 @@ function render() {
 
       var counterHtml = '';
       if (hasCounter) {
-        var percentFill = Math.min(100, (current / goal) * 100);
+        var percentFill = Math.min(100, percent * 100);
         var remaining = goal - current;
         var canPlus5 = remaining >= 5;
-        var hintText = done ? '✓ выполнено' : 'нажми на полосу';
+        var hintText;
+        if (done) hintText = '✓ выполнено 100%';
+        else if (isPartial) hintText = Math.round(percent * 100) + '% выполнено';
+        else hintText = 'нажми на полосу';
+        var stateClass = done ? 'complete' : (isPartial ? 'partial' : '');
         counterHtml =
           '<div class="counter-block">' +
             '<div class="counter-main">' +
               '<button class="counter-minus" data-action="minus" ' + (current === 0 ? 'disabled' : '') + ' title="−1">−</button>' +
-              '<div class="counter-display ' + (done ? 'complete' : '') + '" data-action="edit" data-display-id="' + habit.id + '" title="Нажми, чтобы ввести вручную">' +
+              '<div class="counter-display ' + stateClass + '" data-action="edit" data-display-id="' + habit.id + '" title="Нажми, чтобы ввести вручную">' +
                 '<div class="counter-bg"><div class="counter-bg-fill" style="width:' + percentFill + '%"></div></div>' +
                 '<div class="counter-text">' +
                   '<span class="counter-current">' + current + '</span>' +
@@ -1871,7 +1991,9 @@ function render() {
           '</div>';
       }
 
-      return '<div class="habit ' + (done ? 'done' : '') + '" data-id="' + habit.id + '">' +
+      var habitClass = done ? 'done' : (isPartial ? 'partial' : '');
+
+      return '<div class="habit ' + habitClass + '" data-id="' + habit.id + '">' +
         '<div class="habit-top">' +
           topControl +
           '<div class="habit-info">' +
@@ -1879,6 +2001,7 @@ function render() {
             '<div class="habit-meta">' +
               (startsTomorrow ? '<span style="color:#6c5ce7">✨ со след. дня в стрике</span>' : '') +
               (hasCounter ? '<span>🎯 цель: ' + goal + ' раз</span>' : '') +
+              (isPartial ? '<span style="color:#ff9f43">⚡ ' + Math.round(percent * 100) + '% сегодня</span>' : '') +
               (streak > 0 ? '<span>🔥 ' + streak + ' ' + pluralDays(streak) + ' подряд</span>' : '') +
             '</div>' +
           '</div>' +
@@ -1910,9 +2033,8 @@ function escapeHtml(str) {
   });
 }
 
-// ============ СОБЫТИЯ ФОРМЫ ============
+// ============ СОБЫТИЯ ============
 
-// Обновление подписи под переключателем
 function updateToggleSub() {
   var on = document.getElementById('counterToggle').checked;
   document.getElementById('toggleSub').textContent = on
@@ -1920,14 +2042,11 @@ function updateToggleSub() {
     : 'Сделал / не сделал';
 }
 
-// Клик по всей строке переключателя — включает/выключает
 document.getElementById('counterToggleRow').addEventListener('click', function(e) {
   var checkbox = document.getElementById('counterToggle');
-  // Если клик не по самому чекбоксу — переключаем
   if (e.target !== checkbox) {
     checkbox.checked = !checkbox.checked;
   }
-  // Обновляем визуал
   this.classList.toggle('active', checkbox.checked);
   document.getElementById('goalBlock').classList.toggle('active', checkbox.checked);
   updateToggleSub();
@@ -1939,7 +2058,6 @@ document.getElementById('counterToggleRow').addEventListener('click', function(e
   }
 });
 
-// Кнопки − и + у цели
 document.getElementById('goalMinus').addEventListener('click', function() {
   var input = document.getElementById('goalInput');
   var v = parseInt(input.value, 10) || 1;
@@ -1953,7 +2071,6 @@ document.getElementById('goalPlus').addEventListener('click', function() {
   syncPresets();
 });
 
-// Ручной ввод цели — обновляем пресеты
 document.getElementById('goalInput').addEventListener('input', syncPresets);
 
 function syncPresets() {
@@ -1963,7 +2080,6 @@ function syncPresets() {
   });
 }
 
-// Пресеты
 document.getElementById('goalPresets').addEventListener('click', function(e) {
   var btn = e.target.closest('button');
   if (!btn) return;
@@ -1972,7 +2088,6 @@ document.getElementById('goalPresets').addEventListener('click', function(e) {
   vibrate(10);
 });
 
-// Отправка формы
 document.getElementById('addForm').addEventListener('submit', function(e) {
   e.preventDefault();
   var input = document.getElementById('habitInput');
@@ -1996,7 +2111,6 @@ document.getElementById('addForm').addEventListener('submit', function(e) {
   input.focus();
 });
 
-// Делегирование клика по привычкам
 document.getElementById('habitsList').addEventListener('click', function(e) {
   var el = e.target.closest('[data-action]');
   if (!el) return;
@@ -2042,6 +2156,15 @@ document.querySelector('.bottom-nav').addEventListener('click', function(e) {
 document.querySelectorAll('#statsPeriod button').forEach(function(b) {
   b.classList.toggle('active', parseInt(b.dataset.days, 10) === statsDays);
 });
+
+// Обработка кнопки "Назад" на Android (если в WebView)
+document.addEventListener('backbutton', function(e) {
+  if (activeTab !== 'today') {
+    switchTab('today');
+  } else {
+    if (navigator.app && navigator.app.exitApp) navigator.app.exitApp();
+  }
+}, false);
 
 var lastDay = todayKey();
 document.addEventListener('visibilitychange', function() {
